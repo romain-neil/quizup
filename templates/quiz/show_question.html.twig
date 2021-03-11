@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Question{% endblock %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ asset('css/style.css') }}">
+{% endblock %}
+
+{% block body %}
+	<div class="main">
+		<div class="container">
+			<h1 class="question">{{ question.libele }}</h1>
+			{% if question.image %}
+				<img src="{{ asset('images/' ~ question.image) }}" alt="" />
+			{% endif %}
+			<div>
+				{% for reponse in answers %}
+					<div style="display: table-row">
+						<a class="answer" href="{{ path('save_user_choice', {"quesion_id": question.id, "reponse_id": reponse.id}) }}">
+							<div class="answer-item">{{ range('A','Z')[loop.index0] }}</div>
+							<p class="answer-content">{{ reponse.libele }}</p>
+						</a>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+{% endblock %}

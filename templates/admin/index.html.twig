@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block stylesheets %}
+<style>
+	li>a {
+		text-decoration: none;
+	}
+</style>
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h2>Interface d'administration</h2>
+		<p><a href="{{ path('app_logout') }}">Se déconnecter</a> <a href="{{ path('repondre') }}">Participer au quiz</a> <a href="{{ path('admin_show_high_scores') }}">Liste des meilleurs scores</a></p>
+		<fieldset>
+			<legend>Liste des questions</legend>
+			<p><a href="{{ path('admin_ajout_question') }}">Ajouter une question</a></p>
+
+			{% if questions %}
+				<ul>
+					{% for question in questions %}
+						<li>{{ question.libele }} <a href="{{ path('admin_question_delete', {"id": question.id}) }}">❌</a></li>
+					{% endfor %}
+				</ul>
+			{% else %}
+				<p>Aucune question</p>
+			{% endif %}
+		</fieldset>
+	</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Meilleurs scores{% endblock %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ asset('css/style.css') }}">
+{% endblock %}
+
+{% block head %}
+<meta http-equiv="refresh" content="15" />
+{% endblock %}
+
+{% block body %}
+	<div class="main main-list">
+		<div id="list-container">
+			{% if is_granted('ROLE_ADMIN') %}
+				<p><a href="{{ path('admin_show_questions') }}">Retour à l'administeration</a></p>
+			{% endif %}
+			{% if liste %}
+				{% for student in liste %}
+					<div class="list">
+						<div class="list-item">#{{ loop }}</div>
+						<p class="list-content">{{ student.fancy_name }}</p>
+					</div>
+				{% endfor %}
+			{% else %}
+				<p>Il n'y a aucune participation pour le moment</p>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
