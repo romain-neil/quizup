@@ -140,12 +140,8 @@ class AdminController extends AbstractController {
 		$allUsers = $manager->getRepository(User::class)->findAll();
 
 		//Si on est enseignant, afficher seulement les participations de sa classe
-		if($request->query->get('show') == "class") {
-			//filter participation which are not null, sort scores, give them to the template
-			$part = $this->filterParticipationComplete($participations, $allUsers);
-		} else {
-			$part = $this->filterParticipationComplete($participations, $allUsers, true);
-		}
+		//filter participation which are not null, sort scores, give them to the template
+		$part = $this->filterParticipationComplete($participations, $allUsers, ($request->query->get('show') == "class"));
 
 		rsort($part);
 
