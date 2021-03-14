@@ -134,7 +134,7 @@ class AdminController extends AbstractController {
 	 * @return Response
 	 */
 	public function show_high_scores(Request $request, EntityManagerInterface $manager): Response {
-		$participations = $manager->getRepository(Participation::class)->findAll();
+		$participations = $manager->getRepository(Participation::class)->findBy([], [], 10);
 
 		/** @var User[] $allUsers */
 		$allUsers = $manager->getRepository(User::class)->findAll();
@@ -192,10 +192,14 @@ class AdminController extends AbstractController {
 				//Si la classe de l'utilisateur est la même que l'utilisateur de la boucle, ou que l'on souhaite afficher toutes les classes
 				//Alors on récupère les paramètres de l'utilisateur sur lequel on boucle
 				if($showAllClass || $currentUser->getClasse() == $users[$i]->getClasse()) {
+					$classe = $users[$i]->getClasse();
+
 					$tempArray[] = [
 						"score" => $points,
 						"fancy_name" => $users[$i]->getFancyName(),
-						"user_class" => $users[$i]->getClasse()->getNom()
+						"type_eple" => $classe->getLycee()->getType(),
+						"nom_eple" => $classe->getLycee()->getNom(),
+						"user_class" => $classe->getNom()
 					];
 				}
 			}

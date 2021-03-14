@@ -17,7 +17,7 @@
 				{% for student in liste %}
 					<div class="list">
 						<div class="list-item">#{{ loop.index }}</div>
-						<p class="list-content">{{ student.fancy_name }}</p>
+						<p class="list-content">{{ student.fancy_name }} - {{ student.score }} points - {{ student.type_eple }} {{ student.nom_eple }} - {{ student.user_class }}</p>
 					</div>
 				{% endfor %}
 			{% else %}
