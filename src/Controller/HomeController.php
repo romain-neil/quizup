@@ -7,7 +7,6 @@ use App\Entity\Participation;
 use App\Entity\Question;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,10 +41,9 @@ class HomeController extends AbstractController {
 	 * @Route("/repondre", name="repondre")
 	 * @IsGranted("ROLE_USER")
 	 * @param EntityManagerInterface $em
-	 * @param LoggerInterface $logger
 	 * @return Response
 	 */
-	public function repondre_question(EntityManagerInterface $em, LoggerInterface $logger): Response {
+	public function repondre_question(EntityManagerInterface $em): Response {
 		/** @var User $user */
 		$user = $this->getUser();
 
@@ -127,10 +125,9 @@ class HomeController extends AbstractController {
 	 * @IsGranted("ROLE_USER")
 	 * @param Request $request
 	 * @param EntityManagerInterface $manager
-	 * @param LoggerInterface $logger
 	 * @return Response
 	 */
-	public function save_user_choice(Request $request, EntityManagerInterface $manager, LoggerInterface $logger): Response {
+	public function save_user_choice(Request $request, EntityManagerInterface $manager): Response {
 		$choice = new Choice();
 
 		/** @var Answer $answer */
@@ -156,9 +153,6 @@ class HomeController extends AbstractController {
 
 			$participation->setPoints($userPoints);
 		}
-
-		$logger->info($answer->getLibele());
-		$logger->info($answer->getIsCorrect());
 
 		$manager->persist($choice);
 		$manager->persist($participation);
