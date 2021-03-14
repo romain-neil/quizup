@@ -7,6 +7,7 @@ use App\Entity\Participation;
 use App\Entity\Question;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,9 +42,10 @@ class HomeController extends AbstractController {
 	 * @Route("/repondre", name="repondre")
 	 * @IsGranted("ROLE_USER")
 	 * @param EntityManagerInterface $em
+	 * @param LoggerInterface $logger
 	 * @return Response
 	 */
-	public function repondre_question(EntityManagerInterface $em): Response {
+	public function repondre_question(EntityManagerInterface $em, LoggerInterface $logger): Response {
 		/** @var User $user */
 		$user = $this->getUser();
 
@@ -51,7 +53,7 @@ class HomeController extends AbstractController {
 		$participation = $user->getParticipation();
 
 		/** @var Question[] $allQuestions */
-		$allQuestions = (array) $em->getRepository(Question::class)->findAll();
+		$allQuestions = (array) $em->getRepository(Question::class)->findAll();  //Liste de toutes les questions
 
 		/** @var Choice[] $userChoices */
 		$userChoices = $participation->getChoices(); //Récupération de toute les questions répondues
@@ -60,11 +62,12 @@ class HomeController extends AbstractController {
 		$questionToShow = null;
 
 		if($participation != null) { //Si l'utilisateur a déja une participation enregistrée
+			/** @var Question[] $questionsRepondues */
 			$questionsRepondues = [];
 
+			//Si on a répondu à autant de questions qu'il y en a
 			if(count($userChoices) == count($allQuestions)) {
-				//On a autant répondu à autant de questions que il y a de qestions
-
+				//Alors on redirige l'utilisateur vers la page d'accueil
 				$this->addFlash("success", "Vous avez répondu à toute les questions");
 
 				return $this->redirectToRoute("index");
@@ -73,24 +76,34 @@ class HomeController extends AbstractController {
 			//On liste toutes les questions répondues par l'utilisateur
 			foreach ($userChoices as $choice) {
 				if(in_array($choice->getQuestion(), $allQuestions)) { //On a répondu a cette question
-					$questionsRepondues[] = $choice->getQuestion()->getId();
+					$questionsRepondues[] = $choice->getQuestion();
 				}
 			}
 
-			//Génération du nombre aléatoire
-			$c = count($allQuestions);
-			$c--;
-			$id = rand(0, $c);
+			if(count($questionsRepondues) == 0) {
+				//On a répondu à aucunne question
+				$questionCount = count($allQuestions) - 1;
 
-			//Si on a déja répondu à la question
-			//On itère jusqu'à ce que l'on finisse par tomber sur une question non répondue
-			if(in_array($id, $questionsRepondues)) {
+				$questionToShow = $allQuestions[rand(0, $questionCount)];
+			} else {
+				//Génération du nombre aléatoire
+				$c = count($allQuestions);
+				$c--;
+
+				$potentialQuestions = [];
+
+				//Tant que l'on a répondu à une question, on la retire des questions potentielles
 				for($i = 0; $i < $c; $i++) {
-					$id = rand($i, $c);
+					if(!in_array($allQuestions[$i], $questionsRepondues)) {
+						//On ajoute question à la liste de question à poser
+						array_push($potentialQuestions, $allQuestions[$i]);
+					}
 				}
-			}
 
-			$questionToShow = $allQuestions[$id];
+				shuffle($potentialQuestions);
+
+				$questionToShow = $potentialQuestions[0];
+			}
 		} else {
 			//Première question à répondre
 
@@ -114,15 +127,20 @@ class HomeController extends AbstractController {
 	 * @IsGranted("ROLE_USER")
 	 * @param Request $request
 	 * @param EntityManagerInterface $manager
+	 * @param LoggerInterface $logger
 	 * @return Response
 	 */
-	public function save_user_choice(Request $request, EntityManagerInterface $manager): Response {
+	public function save_user_choice(Request $request, EntityManagerInterface $manager, LoggerInterface $logger): Response {
 		$choice = new Choice();
 
 		/** @var Answer $answer */
 		$answer = $manager->getRepository(Answer::class)->findOneBy(["id" => $request->query->get('reponse_id')]);
 
+		/** @var Question $question */
+		$question = $manager->getRepository(Question::class)->findOneBy(['id' => $request->query->get('question_id')]);
+
 		$choice->addAnswer($answer);
+		$choice->setQuestion($question);
 
 		$manager->persist($choice);
 		$manager->flush();
@@ -132,12 +150,15 @@ class HomeController extends AbstractController {
 		$choice->setParticipation($participation);
 
 		//Si la réponse est correcte
-		if($answer->getIsCorrect()) {
+		if($answer->getIsCorrect() == true) {
 			$userPoints = $participation->getPoints();
 			$userPoints++;
 
 			$participation->setPoints($userPoints);
 		}
+
+		$logger->info($answer->getLibele());
+		$logger->info($answer->getIsCorrect());
 
 		$manager->persist($choice);
 		$manager->persist($participation);
