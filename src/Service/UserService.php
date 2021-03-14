@@ -31,6 +31,7 @@ class UserService {
 		for($i = 0; $i < $nb; $i++) { //Pour chaque ligne
 			$page = $spreedsheet->getActiveSheet();
 
+
 			$user = new User();
 
 			$nomPrenom = $page->getCell("B" . $i)->getValue(); //DOE SPENCER John
