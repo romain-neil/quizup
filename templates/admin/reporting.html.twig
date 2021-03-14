@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reporting{% endblock %}
+
+{% block stylesheets %}
+<style>
+    thead,
+    tfoot {
+        background-color: #3f87a6;
+        color: #fff;
+    }
+    tbody {
+        background-color: #e4f0f5;
+    }
+    table {
+        border-collapse: collapse;
+        border: 2px solid rgb(200, 200, 200);
+        letter-spacing: 1px;
+        font-family: sans-serif;
+        font-size: .8rem;
+    }
+    td,
+    th {
+        border: 1px solid rgb(190, 190, 190);
+        padding: 5px 10px;
+    }
+    td {
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+	<h1>Affichage de la liste des élèves</h1>
+	<p><a href="{{ path('admin_show_questions') }}">Retour à l'administration</a></p>
+	<table>
+		<thead>
+			<tr>
+				<th scope="col">Utilisateur</th>
+				<th scope="col">Score</th>
+				<th scope="col">Temps de réponse moyen (en secondes)</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for student in liste %}
+			<tr>
+				<td>{{ student.user }}</td>
+				<td>{{ student.score }}</td>
+				<td>{{ student.time }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

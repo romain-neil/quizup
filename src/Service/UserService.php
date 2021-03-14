@@ -3,6 +3,8 @@ namespace App\Service;
 
 use App\Entity\Classe;
 use App\Entity\Lycee;
+use App\Entity\Participation;
+use App\Entity\Record;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
@@ -107,5 +109,40 @@ class UserService {
 
 			$pBar->advance();
 		}
+	}
+
+	/**
+	 * @param Participation[] $participations
+	 * @param EntityManagerInterface $manager
+	 * @return array
+	 */
+	public function calculateMeanResponseTime(array $participations, EntityManagerInterface $manager): array {
+		$tmpArr = [];
+
+		//Pour chaque utilisateurs dans $arrayList, on recherche tous les enregistrements, puis on calcule le temps de réponse moyen
+		foreach ($participations as $p) {
+			/** @var Record[] $records */
+			$records = $manager->getRepository(Record::class)->findByParticipationId($p->getId());
+
+			$responseTime = 0;
+			$c = count($records);
+
+			if($c == 0) {
+				continue;
+			}
+
+			//Pour chaque participation
+			foreach ($records as $enregistrement) {
+				$responseTime += $enregistrement->getDuration();
+			}
+
+			$tmpArr[] = [
+				"user" => $p->getUtilisateur()->getFancyName(),
+				"time" => ($responseTime / $c),
+				"score" => $p->getPoints()
+			];
+		}
+
+		return $tmpArr;
 	}
 }

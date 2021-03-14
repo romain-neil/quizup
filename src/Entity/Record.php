@@ -26,7 +26,6 @@ class Record {
 	 */
 	private ?int $participation_id;
 
-
 	public function getId(): ?int {
 		return $this->id;
 	}

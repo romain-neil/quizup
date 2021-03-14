@@ -17,6 +17,20 @@ class RecordRepository extends ServiceEntityRepository {
 		parent::__construct($registry, Record::class);
 	}
 
+	/**
+	 * Retourne les enregistrements avec l'id de participation $id
+	 * @param $id
+	 * @return int|mixed|string
+	 */
+	public function findByParticipationId($id) {
+		return $this->createQueryBuilder('r')
+			->andWhere('r.participation_id = :pid')
+			->setParameter('pid', $id)
+			->orderBy('r.id', 'ASC')
+			->getQuery()
+			->getResult();
+	}
+
 	// /**
 	//  * @return Record[] Returns an array of Record objects
 	//  */

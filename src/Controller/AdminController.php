@@ -7,6 +7,7 @@ use App\Entity\Question;
 use App\Entity\User;
 use App\Form\QuestionType;
 use App\Service\FileUploader;
+use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -172,6 +173,21 @@ class AdminController extends AbstractController {
 		}
 
 		return $question;
+	}
+
+	/**
+	 * Affiche un reporting des utilisateurs dans le même établissement que l'utilisateur actuel
+	 * @Route("/reporting", name="reporting")
+	 * @param EntityManagerInterface $manager
+	 * @param UserService $service
+	 * @return Response
+	 */
+	public function showReporting(EntityManagerInterface $manager, UserService $service): Response {
+		$participations = $manager->getRepository(Participation::class)->findAll();
+
+		$liste = $service->calculateMeanResponseTime($participations, $manager);
+
+		return $this->render('admin/reporting.html.twig', ['liste' => $liste]);
 	}
 
 	/**
