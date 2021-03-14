@@ -110,6 +110,8 @@ class UserService {
 
 			$pBar->advance();
 		}
+
+		$this->manager->flush();
 	}
 
 	/**

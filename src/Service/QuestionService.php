@@ -3,10 +3,20 @@ namespace App\Service;
 
 use App\Entity\Answer;
 use App\Entity\Question;
+use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class QuestionService {
+
+	/**
+	 * @var EntityManagerInterface
+	 */
+	private EntityManagerInterface $manager;
+
+	public function __construct(EntityManagerInterface $manager) {
+		$this->manager = $manager;
+	}
 
 	public function inport(string $file, ProgressBar $bar) {
 		$reader = new Xls();
@@ -41,14 +51,19 @@ class QuestionService {
 
 				$question->addAnswer($reponse);
 
+				$this->manager->persist($reponse);
+
 				$j++;
 			}
 
 			//Enregistrement des réponses
+			$this->manager->persist($question);
 
 			//...
 			$bar->advance();
 		}
+
+		$this->manager->flush();
 	}
 
 }
