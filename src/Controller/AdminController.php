@@ -161,7 +161,7 @@ class AdminController extends AbstractController {
 			$ans = new Answer();
 			$ans->setLibele($form->get('answer-lbl-' . $letter)->getData());
 
-			if($form->has('answer-rd' . $letter)) {
+			if($form->has('answer-rd-' . $letter)) {
 				$ans->setIsCorrect(true);
 			} else {
 				$ans->setIsCorrect(false);
@@ -183,6 +183,7 @@ class AdminController extends AbstractController {
 	 * @return Response
 	 */
 	public function showReporting(EntityManagerInterface $manager, UserService $service): Response {
+		/** @var Participation[] $participations */
 		$participations = $manager->getRepository(Participation::class)->findAll();
 
 		$liste = $service->calculateMeanResponseTime($participations, $manager);

@@ -29,6 +29,20 @@ class ApiController extends AbstractController {
 	public function createUser(UserPasswordEncoderInterface $encoder): Response {
 		$em = $this->getDoctrine()->getManager();
 
+		$aristide = new Lycee();
+		$aristide->setNom("Aristide Briand");
+		$aristide->setType("Lycée");
+
+		$em->persist($aristide);
+		$em->flush();
+
+		$snir = new Classe();
+		$snir->setLycee($aristide);
+		$snir->setNom('SNIR2');
+
+		$em->persist($snir);
+		$em->flush();
+
 		/** @var Classe $SNIR2 */
 		$SNIR2 = $em->getRepository(Classe::class)->findOneBy(["id" => 1]);
 

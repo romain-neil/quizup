@@ -1,4 +1,4 @@
-const api_base = '/quizup/api';
+const api_base = '/api';
 
 if(typeof Element.prototype.clearChildren === 'undefined') {
 	Object.defineProperty(Element.prototype, 'clearChildren', {

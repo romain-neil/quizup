@@ -7,6 +7,7 @@ use App\Entity\Participation;
 use App\Entity\Question;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -125,9 +126,10 @@ class HomeController extends AbstractController {
 	 * @IsGranted("ROLE_USER")
 	 * @param Request $request
 	 * @param EntityManagerInterface $manager
+	 * @param LoggerInterface $logger
 	 * @return Response
 	 */
-	public function save_user_choice(Request $request, EntityManagerInterface $manager): Response {
+	public function save_user_choice(Request $request, EntityManagerInterface $manager, LoggerInterface $logger): Response {
 		$choice = new Choice();
 
 		/** @var Answer $answer */
