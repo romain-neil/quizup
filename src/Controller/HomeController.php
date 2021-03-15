@@ -42,9 +42,10 @@ class HomeController extends AbstractController {
 	 * @Route("/repondre", name="repondre")
 	 * @IsGranted("ROLE_USER")
 	 * @param EntityManagerInterface $em
+	 * @param LoggerInterface $logger
 	 * @return Response
 	 */
-	public function repondre_question(EntityManagerInterface $em): Response {
+	public function repondre_question(EntityManagerInterface $em, LoggerInterface $logger): Response {
 		/** @var User $user */
 		$user = $this->getUser();
 
@@ -85,21 +86,23 @@ class HomeController extends AbstractController {
 
 				$questionToShow = $allQuestions[rand(0, $questionCount)];
 			} else {
-				//Génération du nombre aléatoire
-				$c = count($allQuestions);
-				$c--;
-
 				$potentialQuestions = [];
 
 				//Tant que l'on a répondu à une question, on la retire des questions potentielles
-				for($i = 0; $i < $c; $i++) {
-					if(!in_array($allQuestions[$i], $questionsRepondues)) {
+				foreach ($allQuestions as $question) {
+					if(!in_array($question, $questionsRepondues)) {
 						//On ajoute question à la liste de question à poser
-						array_push($potentialQuestions, $allQuestions[$i]);
+						array_push($potentialQuestions, $question);
 					}
 				}
 
+				$logger->info('On a deja repondu a ' . count($questionsRepondues) . 'question(s)');
+
 				shuffle($potentialQuestions);
+
+				dump($questionsRepondues);
+				dump($allQuestions);
+				dump($potentialQuestions);
 
 				$questionToShow = $potentialQuestions[0];
 			}
@@ -150,6 +153,10 @@ class HomeController extends AbstractController {
 
 		//Si la réponse est correcte
 		if($answer->getIsCorrect() == true) {
+			if($participation->getPoints() == null) {
+				$participation->setPoints(0);
+			}
+
 			$userPoints = $participation->getPoints();
 			$userPoints++;
 

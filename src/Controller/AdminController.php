@@ -9,6 +9,7 @@ use App\Form\QuestionType;
 use App\Service\FileUploader;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -161,7 +162,7 @@ class AdminController extends AbstractController {
 			$ans = new Answer();
 			$ans->setLibele($form->get('answer-lbl-' . $letter)->getData());
 
-			if($form->has('answer-rd-' . $letter)) {
+			if($form->has('answer-rd-' . $letter) && $form->get('answer-rd-' . $letter)->getData() == "1") {
 				$ans->setIsCorrect(true);
 			} else {
 				$ans->setIsCorrect(false);
