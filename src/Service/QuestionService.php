@@ -35,7 +35,6 @@ class QuestionService {
 			}
 
 			$question = new Question();
-			$answers = [];
 			$j = 0;
 
 			//Si il y a une image

@@ -18,6 +18,8 @@ class UserService {
 	 */
 	private EntityManagerInterface $manager;
 
+	private array $etlb;
+
 	public function __construct(EntityManagerInterface $manager) {
 		$this->manager = $manager;
 	}
@@ -34,9 +36,9 @@ class UserService {
 
 			$user = new User();
 
-			$nomPrenom = $page->getCell("B" . $i)->getValue(); //DOE SPENCER John
+			$nomPrenom = $page->getCell("B" . $i)->getFormattedValue(); //DOE SPENCER John
 			$pass = $page->getCell("C" . $i)->getCalculatedValue();
-			$classe = $page->getCell("D" . $i)->getValue();
+			$classe = $page->getCell("D" . $i)->getFormattedValue();
 
 			//trie du prénom et du nom
 			$nomPrenom = explode(" ", $nomPrenom);
@@ -55,37 +57,39 @@ class UserService {
 			$typeEPLE = $page->getCell("E" . $i)->getValue();
 			$nomEPLE = $page->getCell("F" . $i)->getValue();
 
-			//L'établissement n'a pas été enregistré en bdd
-			if(!isset($etablissements[$typeEPLE], $etablissements[$typeEPLE][$nomEPLE]["obj"])) {
-				$eple = new Lycee();
+			/** @var Lycee $eple */
+			$eple = $this->manager->getRepository(Lycee::class)->findOneBy(['type' => $typeEPLE, 'nom' => $nomEPLE]);
 
-				$eple->setType($typeEPLE);
-				$eple->setNom($nomEPLE);
+			if($eple == null) {
+				$etablissement = new Lycee();
+				$etablissement->setNom($nomEPLE);
+				$etablissement->setType($typeEPLE);
 
-				$this->manager->persist($eple);
+				$this->manager->persist($etablissement);
 				$this->manager->flush();
 
-				$etablissements[$typeEPLE][$nomEPLE]["obj"] = $eple;
+				$this->etlb[$typeEPLE][$nomEPLE]['obj'] = $etablissement;
 			}
 
-			if(!isset($etablissements[$typeEPLE][$nomEPLE]["classe"])) {
+			if(!isset($this->etlb[$typeEPLE][$nomEPLE]['classe'])) {
 				$ClasseEleve = new Classe();
-				$ClasseEleve->setLycee($etablissements[$typeEPLE][$nomEPLE]);
-
-				$etablissements[$typeEPLE][$nomEPLE]["classe"]["obj"] = $ClasseEleve;
+				$ClasseEleve->setLycee($eple);
+				$ClasseEleve->setNom($classe);
 
 				/** @var Lycee $lycee */
-				$lycee = $etablissements[$typeEPLE][$nomEPLE]["obj"];
+				$lycee = $this->etlb[$typeEPLE][$nomEPLE]["obj"];
 				$lycee->addClass($ClasseEleve);
 
 				$this->manager->persist($lycee);
 
-				$etablissements[$typeEPLE][$nomEPLE]["obj"] = $lycee;
+				$this->etlb[$typeEPLE][$nomEPLE]["obj"] = $lycee;
 			}
 
-			if(!isset($etablissements[$typeEPLE][$nomEPLE]["classe"]["prof_obj"])) {
-				$nomProf = $page->getCell("G" . $i); //TODO: fix me
-				$passProf = $page->getCell("H" . $i);
+			//Le professeur n'a pas été enregistré en bdd
+			if(!isset($this->etlb[$typeEPLE][$nomEPLE]['prof']['obj'])) {
+				$nomProf = $page->getCell("G" . $i)->getFormattedValue();
+				$prenomProf = $page->getCell('I' . $i)->getFormattedValue();
+				$passProf = $page->getCell("H" . $i)->getFormattedValue();
 
 				$prof = new User();
 				$prof->setNom($nomProf);
@@ -93,20 +97,19 @@ class UserService {
 				$prof->setRoles(["ROLE_PROF"]);
 
 				$this->manager->persist($prof);
+
+				$this->etlb[$typeEPLE][$nomEPLE]['prof']['obj'] = $prof;
 			}
-
-			//Le professeur n'a pas été enregistré en bdd
-
-			//Récupération du professeur
 
 			//Paramétrage de l'utilisateur
 			$user->setPrenom($prenom);
 			$user->setNom(implode(' ', $nom));
 			$user->setPassword($pass);
-			$user->setClasse($etablissements[$typeEPLE][$nomEPLE]["classe"]["obj"]);
+			$user->setClasse($this->etlb[$typeEPLE][$nomEPLE]['classe']['obj']);
 			$user->setUuid(Uuid::v4());
 
 			$this->manager->persist($user);
+			$this->manager->flush();
 
 			$pBar->advance();
 		}
