@@ -24,21 +24,26 @@ class UserService {
 		$this->manager = $manager;
 	}
 
-	public function import(string $file, int $nb, ProgressBar $pBar) {
+	public function import(string $file, ProgressBar $pBar) {
 		$reader = new Xls();
 
 		$spreedsheet = $reader->load($file);
 		$spreedsheet->setActiveSheetIndex(0);
 
-		for($i = 0; $i < $nb; $i++) { //Pour chaque ligne
+		$index = 0;
+
+		while(true) { //Pour chaque ligne
 			$page = $spreedsheet->getActiveSheet();
 
+			if($page->getCell('A' . $index)->getFormattedValue() == "") {
+				break;
+			}
 
 			$user = new User();
 
-			$nomPrenom = $page->getCell("B" . $i)->getFormattedValue(); //DOE SPENCER John
-			$pass = $page->getCell("C" . $i)->getCalculatedValue();
-			$classe = $page->getCell("D" . $i)->getFormattedValue();
+			$nomPrenom = $page->getCell("B" . $index)->getFormattedValue(); //DOE SPENCER John
+			$pass = $page->getCell("C" . $index)->getCalculatedValue();
+			$classe = $page->getCell("D" . $index)->getFormattedValue();
 
 			//trie du prénom et du nom
 			$nomPrenom = explode(" ", $nomPrenom);
@@ -54,8 +59,8 @@ class UserService {
 			}
 
 			//Récupération de l'établissement scolaire
-			$typeEPLE = $page->getCell("E" . $i)->getValue();
-			$nomEPLE = $page->getCell("F" . $i)->getValue();
+			$typeEPLE = $page->getCell("E" . $index)->getValue();
+			$nomEPLE = $page->getCell("F" . $index)->getValue();
 
 			/** @var Lycee $eple */
 			$eple = $this->manager->getRepository(Lycee::class)->findOneBy(['type' => $typeEPLE, 'nom' => $nomEPLE]);
@@ -87,12 +92,13 @@ class UserService {
 
 			//Le professeur n'a pas été enregistré en bdd
 			if(!isset($this->etlb[$typeEPLE][$nomEPLE]['prof']['obj'])) {
-				$nomProf = $page->getCell("G" . $i)->getFormattedValue();
-				$prenomProf = $page->getCell('I' . $i)->getFormattedValue();
-				$passProf = $page->getCell("H" . $i)->getFormattedValue();
+				$nomProf = $page->getCell("G" . $index)->getFormattedValue();
+				$prenomProf = $page->getCell('I' . $index)->getFormattedValue();
+				$passProf = $page->getCell("H" . $index)->getFormattedValue();
 
 				$prof = new User();
 				$prof->setNom($nomProf);
+				$prof->setPrenom($prenomProf);
 				$prof->setPassword($passProf);
 				$prof->setRoles(["ROLE_PROF"]);
 
@@ -112,6 +118,7 @@ class UserService {
 			$this->manager->flush();
 
 			$pBar->advance();
+			$index++;
 		}
 
 		$this->manager->flush();

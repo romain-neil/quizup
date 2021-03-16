@@ -23,8 +23,7 @@ class ImportUserCommand extends Command {
 	public function configure() {
 		$this
 			->setDescription('Importation d\'utilisateurs')
-			->addArgument('file', InputArgument::REQUIRED)
-			->addArgument('nb', InputArgument::REQUIRED, 'Nombre d\'utilisateur à importer');
+			->addArgument('file', InputArgument::REQUIRED);
 	}
 
 	public function execute(InputInterface $input, OutputInterface $output): int {
@@ -33,7 +32,6 @@ class ImportUserCommand extends Command {
 
 		$this->userService->import(
 			$input->getArgument('file'),
-			$input->getArgument('nb'),
 			$pBar
 		);
 
