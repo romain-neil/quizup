@@ -7,7 +7,8 @@ use App\Entity\Participation;
 use App\Entity\Record;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use PhpOffice\PhpSpreadsheet\Reader\Xls;
+use PhpOffice\PhpSpreadsheet\Calculation\Exception;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Uid\Uuid;
 
@@ -24,17 +25,20 @@ class UserService {
 		$this->manager = $manager;
 	}
 
+	/**
+	 * @param string $file
+	 * @param ProgressBar $pBar
+	 * @throws Exception
+	 * @throws \PhpOffice\PhpSpreadsheet\Exception
+	 */
 	public function import(string $file, ProgressBar $pBar) {
-		$reader = new Xls();
-
-		$spreedsheet = $reader->load($file);
+		$spreedsheet = IOFactory::load($file);
 		$spreedsheet->setActiveSheetIndex(0);
+		$page = $spreedsheet->getActiveSheet();
 
 		$index = 0;
 
 		while(true) { //Pour chaque ligne
-			$page = $spreedsheet->getActiveSheet();
-
 			if($page->getCell('A' . $index)->getFormattedValue() == "") {
 				break;
 			}
@@ -157,5 +161,34 @@ class UserService {
 		}
 
 		return $tmpArr;
+	}
+
+	/**
+	 * @param string $nom
+	 * @param string $prenom
+	 * @param int $idClasse
+	 * @return int
+	 */
+	public function createUser(string $nom, string $prenom, int $idClasse): int {
+		$user = new User();
+
+		$user->setNom($nom);
+		$user->setPrenom($prenom);
+		$user->setUuid(Uuid::v4());
+		$user->setPassword('pass');
+
+		/** @var Classe $classe */
+		$classe = $this->manager->getRepository(Classe::class)->findOneBy(['id' => $idClasse]);
+
+		if($classe != null) {
+			$user->setClasse($classe);
+		} else {
+			return 0;
+		}
+
+		$this->manager->persist($user);
+		$this->manager->flush();
+
+		return 1;
 	}
 }

@@ -7,7 +7,18 @@
 {% endblock %}
 
 {% block body %}
-    <h1 class="first-title">Bonjour {{ user.getFancyName() }}</h1>
-    <p><a href="{{ path('repondre') }}">Répondre au quiz</a></p>
-    <p><a href="{{ path('app_logout') }}">Se déconnecter</a></p>
+    <div class="main">
+        <div class="main-container">
+            <h1 class="first-title">Bonjour {{ user.getFancyName() }}</h1>
+
+            {% for msg in app.flashes('success') %}
+                <div class="success-container">
+                    <p><b>Succès ! </b> {{ msg }}</p>
+                </div>
+            {% endfor %}
+
+            <p><a href="{{ path('repondre') }}">Répondre au quiz</a></p>
+            <p><a href="{{ path('app_logout') }}">Se déconnecter</a></p>
+        </div>
+    </div>
 {% endblock %}

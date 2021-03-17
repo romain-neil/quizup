@@ -26,7 +26,7 @@ class EncodePasswordCommand extends Command {
 			->addArgument('pass', InputArgument::REQUIRED);
 	}
 
-	public function execute(InputInterface $input, OutputInterface $output): int {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$pass = $input->getArgument('pass');
 		$user = new User();
 

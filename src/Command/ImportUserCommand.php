@@ -26,9 +26,8 @@ class ImportUserCommand extends Command {
 			->addArgument('file', InputArgument::REQUIRED);
 	}
 
-	public function execute(InputInterface $input, OutputInterface $output): int {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$pBar = new ProgressBar($output);
-		$pBar->setMaxSteps($input->getArgument('nb'));
 
 		$this->userService->import(
 			$input->getArgument('file'),

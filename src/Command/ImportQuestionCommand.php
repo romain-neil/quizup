@@ -34,7 +34,8 @@ class ImportQuestionCommand extends Command {
 
 		$this->service->inport(
 			$input->getArgument('file'),
-			$progress
+			$progress,
+			$output
 		);
 
 		$progress->finish();

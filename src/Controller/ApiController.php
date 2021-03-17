@@ -22,6 +22,29 @@ use Symfony\Component\Uid\Uuid;
 class ApiController extends AbstractController {
 
 	/**
+	 * @Route("/parts")
+	 * @param EntityManagerInterface $manager
+	 * @return JsonResponse
+	 */
+	public function createAllParticipations(EntityManagerInterface $manager) {
+		/** @var User[] $users */
+		$users = $manager->getRepository(User::class)->findAll();
+
+		foreach ($users as $user) {
+			if($user->getParticipation() == null) {
+				$part = new Participation();
+				$part->setUtilisateur($user);
+
+				$manager->persist($part);
+			}
+		}
+
+		$manager->flush();
+
+		return $this->json(["status" => "ok"]);
+	}
+
+	/**
 	 * @Route("/create_user")
 	 * @param UserPasswordEncoderInterface $encoder
 	 * @return Response

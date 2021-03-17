@@ -46,9 +46,10 @@
 			<tr>
 				<td>{{ student.user }}</td>
 				<td>{{ student.score }}</td>
-				<td>{{ student.time }}</td>
+				<td>{{ student.time|number_format(2) }}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
 	</table>
+	<p>Effectif: {{ liste|length }}</p>
 {% endblock %}

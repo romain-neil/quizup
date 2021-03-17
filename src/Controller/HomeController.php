@@ -5,6 +5,7 @@ use App\Entity\Answer;
 use App\Entity\Choice;
 use App\Entity\Participation;
 use App\Entity\Question;
+use App\Entity\Record;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -42,10 +43,9 @@ class HomeController extends AbstractController {
 	 * @Route("/repondre", name="repondre")
 	 * @IsGranted("ROLE_USER")
 	 * @param EntityManagerInterface $em
-	 * @param LoggerInterface $logger
 	 * @return Response
 	 */
-	public function repondre_question(EntityManagerInterface $em, LoggerInterface $logger): Response {
+	public function repondre_question(EntityManagerInterface $em): Response {
 		/** @var User $user */
 		$user = $this->getUser();
 
@@ -96,13 +96,7 @@ class HomeController extends AbstractController {
 					}
 				}
 
-				$logger->info('On a deja repondu a ' . count($questionsRepondues) . 'question(s)');
-
 				shuffle($potentialQuestions);
-
-				dump($questionsRepondues);
-				dump($allQuestions);
-				dump($potentialQuestions);
 
 				$questionToShow = $potentialQuestions[0];
 			}
@@ -117,6 +111,8 @@ class HomeController extends AbstractController {
 		$answsers = (array) $em->getRepository(Answer::class)->findBy(["question" => $questionToShow]);
 		shuffle($answsers);
 
+		$this->get('session')->set('start', time());
+
 		return $this->render('quiz/show_question.html.twig', [
 			"question" => $questionToShow,
 			"answers" => $answsers
@@ -129,11 +125,12 @@ class HomeController extends AbstractController {
 	 * @IsGranted("ROLE_USER")
 	 * @param Request $request
 	 * @param EntityManagerInterface $manager
-	 * @param LoggerInterface $logger
 	 * @return Response
 	 */
-	public function save_user_choice(Request $request, EntityManagerInterface $manager, LoggerInterface $logger): Response {
+	public function save_user_choice(Request $request, EntityManagerInterface $manager): Response {
 		$choice = new Choice();
+
+		$start = (int)$this->get('session')->get('start');
 
 		/** @var Answer $answer */
 		$answer = $manager->getRepository(Answer::class)->findOneBy(["id" => $request->query->get('reponse_id')]);
@@ -163,6 +160,11 @@ class HomeController extends AbstractController {
 			$participation->setPoints($userPoints);
 		}
 
+		$record = new Record();
+		$record->setDuration((time() - $start));
+		$record->setParticipationId($participation->getId());
+
+		$manager->persist($record);
 		$manager->persist($choice);
 		$manager->persist($participation);
 		$manager->flush();

@@ -11,18 +11,21 @@
 		<div class="main-container">
 			<h1 class="question">{{ question.libele }}</h1>
 			{% if question.image %}
-				<img src="{{ asset('images/' ~ question.image) }}" alt="" />
+				<div id="image-container">
+					<img class="image-question" src="{{ asset('images/' ~ question.image) }}" alt="image du questionnaire" />
+				</div>
 			{% endif %}
-			<div>
-				{% for reponse in answers %}
-					<div style="display: table-row">
-
-						<a class="answer" href="{{ path('save_user_choice', {"question_id": question.id, "reponse_id": reponse.id}) }}">
-							<div class="answer-item">{{ range('A','Z')[loop.index0] }}</div>
-							<p class="answer-content">{{ reponse.libele }}</p>
-						</a>
-					</div>
-				{% endfor %}
+			<div id="question-container">
+				<div>
+					{% for reponse in answers %}
+						<div style="display: table-row">
+							<a class="answer" href="{{ path('save_user_choice', {"question_id": question.id, "reponse_id": reponse.id}) }}">
+								<div class="answer-item">{{ range('A','Z')[loop.index0] }}</div>
+								<p class="answer-content">{{ reponse.libele }}</p>
+							</a>
+						</div>
+					{% endfor %}
+				</div>
 			</div>
 		</div>
 	</div>
