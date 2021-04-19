@@ -4,21 +4,31 @@ namespace App\Service;
 use App\Entity\Answer;
 use App\Entity\Question;
 use Doctrine\ORM\EntityManagerInterface;
+use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class QuestionService
+ * @package App\Service
+ */
 class QuestionService {
 
-	/**
-	 * @var EntityManagerInterface
-	 */
 	private EntityManagerInterface $manager;
 
 	public function __construct(EntityManagerInterface $manager) {
 		$this->manager = $manager;
 	}
 
+	/**
+	 * Permet d'importer une liste de question depuis le fichier $file
+	 * @param string $file
+	 * @param ProgressBar $bar
+	 * @param OutputInterface $output
+	 * @throws Exception
+	 * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+	 */
 	public function inport(string $file, ProgressBar $bar, OutputInterface $output) {
 		$fileType = IOFactory::identify($file);
 		$reader = IOFactory::createReader($fileType);
@@ -67,7 +77,6 @@ class QuestionService {
 			$this->manager->persist($question);
 			$this->manager->flush();
 
-			//...
 			$bar->advance();
 
 			$i++;

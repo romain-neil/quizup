@@ -30,7 +30,7 @@ class HomeController extends AbstractController {
 
 		if ($this->isGranted('ROLE_PROF')) {
 			//On redirige vers l'admin
-			return $this->redirectToRoute('admin_show_questions');
+			return $this->redirectToRoute('admin_index');
 		}
 
 		return $this->render("index.html.twig", [

@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminController extends AbstractController {
 
 	/**
-	 * @Route("/show", name="show_questions")
+	 * @Route("/", name="index")
 	 * @return Response
 	 */
 	public function show_questions(): Response {

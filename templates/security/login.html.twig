@@ -17,14 +17,14 @@
 				<input class="input" placeholder="Nom" type="text"  value="" name="nom" />
 				<input class="input" placeholder="Mot de passe" type="password"  name="password" value="" />
 
-				<select onchange="loadClass()" id="eple" name="eple">
+				<select onchange="loadClass()" id="eple" name="eple" class="input select">
 					<option disabled selected="selected">Sélectionnez un EPLE ci-dessous</option>
 					{% for eple in lycee %}
 						<option value="{{ eple.id }}">{{ eple.type }} {{ eple.nom }}</option>
 					{% endfor %}
 				</select>
 
-				<select name="classe" id="class_list"></select>
+				<select name="classe" id="class_list" class="input select"></select>
 
 				<button class="button">Se connecter</button>
 

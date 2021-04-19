@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\ChoiceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Représente un choix fait par un utilisateur en bdd
  * @ORM\Entity(repositoryClass=ChoiceRepository::class)
  * @ORM\Table(name="choices")
  */
@@ -21,6 +21,7 @@ class Choice {
 	private ?int $id;
 
 	/**
+	 * Question liée au choix
 	 * @ORM\ManyToOne(targetEntity=Question::class)
 	 */
 	private ?Question $question;
