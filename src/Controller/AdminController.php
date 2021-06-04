@@ -9,7 +9,6 @@ use App\Form\QuestionType;
 use App\Service\FileUploader;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -67,7 +66,7 @@ class AdminController extends AbstractController {
 			$manager->persist($question);
 			$manager->flush();
 
-			return $this->redirectToRoute("admin_show_questions");
+			return $this->redirectToRoute("admin_index");
 		}
 
 		return $this->render('admin/ajout_question.html.twig', ['form' => $form->createView()]);
@@ -101,14 +100,14 @@ class AdminController extends AbstractController {
 			//$this->getDoctrine()->getManager(Question::class)->persist($question);
 			//$this->getDoctrine()->getManager(Question::class)->flush();
 
-			return $this->redirectToRoute('admin_show_questions');
+			return $this->redirectToRoute('admin_index');
 		} else {
 			if($question != null) {
 				//On affiche le formulaire d'édition
 				return $this->render('', ['question' => $question]);
 			}
 
-			return $this->redirectToRoute("admin_show_questions");
+			return $this->redirectToRoute("admin_index");
 		}
 	}
 
@@ -125,7 +124,7 @@ class AdminController extends AbstractController {
 		$manager->remove($question);
 		$manager->flush();
 
-		return $this->redirectToRoute("admin_show_questions");
+		return $this->redirectToRoute("admin_index");
 	}
 
 	/**
