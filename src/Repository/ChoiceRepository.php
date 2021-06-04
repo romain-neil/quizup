@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\Choice;
@@ -12,39 +11,10 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Choice[]    findAll()
  * @method Choice[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ChoiceRepository extends ServiceEntityRepository
-{
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Choice::class);
-    }
+class ChoiceRepository extends ServiceEntityRepository {
 
-    // /**
-    //  * @return Choice[] Returns an array of Choice objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+	public function __construct(ManagerRegistry $registry) {
+		parent::__construct($registry, Choice::class);
+	}
 
-    /*
-    public function findOneBySomeField($value): ?Choice
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
