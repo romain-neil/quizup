@@ -201,6 +201,7 @@ class AdminController extends AbstractController {
 		$tempArray = [];
 		$c = count($participation);
 
+		/** @var User $currentUser */
 		$currentUser = $this->getUser();
 
 		for($i = 0; $i < $c; $i++) {
