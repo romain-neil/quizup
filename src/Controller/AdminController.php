@@ -209,7 +209,7 @@ class AdminController extends AbstractController {
 			if($points != null) {
 				//Si la classe de l'utilisateur est la même que l'utilisateur de la boucle, ou que l'on souhaite afficher toutes les classes
 				//Alors on récupère les paramètres de l'utilisateur sur lequel on boucle
-				if($showAllClass || $currentUser->getClasse() == $users[$i]->getClasse()) {
+				if($showAllClass || $currentUser->getClasse() === $users[$i]->getClasse()) {
 					$classe = $users[$i]->getClasse();
 
 					$tempArray[] = [
