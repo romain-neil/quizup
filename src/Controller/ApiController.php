@@ -26,7 +26,7 @@ class ApiController extends AbstractController {
 	 * @param EntityManagerInterface $manager
 	 * @return JsonResponse
 	 */
-	public function createAllParticipations(EntityManagerInterface $manager) {
+	public function createAllParticipations(EntityManagerInterface $manager): JsonResponse {
 		/** @var User[] $users */
 		$users = $manager->getRepository(User::class)->findAll();
 
