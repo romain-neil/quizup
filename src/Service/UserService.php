@@ -32,9 +32,9 @@ class UserService {
 	 * @throws \PhpOffice\PhpSpreadsheet\Exception
 	 */
 	public function import(string $file, ProgressBar $pBar) {
-		$spreedsheet = IOFactory::load($file);
-		$spreedsheet->setActiveSheetIndex(0);
-		$page = $spreedsheet->getActiveSheet();
+		$spreadsheet = IOFactory::load($file);
+		$spreadsheet->setActiveSheetIndex(0);
+		$page = $spreadsheet->getActiveSheet();
 
 		$index = 0;
 
