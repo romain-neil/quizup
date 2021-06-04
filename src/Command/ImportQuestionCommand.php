@@ -32,6 +32,10 @@ class ImportQuestionCommand extends Command {
 			->addArgument('file', InputArgument::REQUIRED);
 	}
 
+	/**
+	 * @throws \PhpOffice\PhpSpreadsheet\Exception
+	 * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$progress = new ProgressBar($output);
 
