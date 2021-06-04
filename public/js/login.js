@@ -23,7 +23,7 @@ function loadClass() {
 			let select = document.getElementById('class_list');
 			select.clearChildren()
 
-			for(const [id, nom] of Object.entries(d.response)) {
+			for (const [id, nom] of Object.entries(d.response)) {
 				let opt = document.createElement('option');
 				opt.value = id;
 				opt.append(nom)
