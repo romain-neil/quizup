@@ -74,7 +74,7 @@ class AdminController extends AbstractController {
 
 	/**
 	 * WIP - Work In Progress
-	 * @Route("/edit_question/{slug}", name="edit_question")
+	 * @Route("/edit/{slug}", name="question_edit")
 	 * @param Request $request
 	 * @param string $slug
 	 * @param EntityManagerInterface $manager
@@ -82,11 +82,16 @@ class AdminController extends AbstractController {
 	 */
 	public function edit_question(string $slug, Request $request, EntityManagerInterface $manager): Response {
 		//On recherche la question
-
-		/** @var Question $question */
+		/** @var Question|null $question */
 		$question = $manager->getRepository(Question::class)->findOneBy(["id" => $slug]);
 
-		if($request->getMethod() == Request::METHOD_POST) {
+		if($question == null) {
+			return $this->redirectToRoute('admin_index');
+		}
+
+		$form = $this->createForm(QuestionType::class, $question);
+
+		if($form->isSubmitted() && $form->isValid()) {
 			//On sauvegarde avec les nouveaux paramètres
 			$question->setLibele($request->request->get('libele'));
 
@@ -101,14 +106,10 @@ class AdminController extends AbstractController {
 			//$this->getDoctrine()->getManager(Question::class)->flush();
 
 			return $this->redirectToRoute('admin_index');
-		} else {
-			if($question != null) {
-				//On affiche le formulaire d'édition
-				return $this->render('', ['question' => $question]);
-			}
-
-			return $this->redirectToRoute("admin_index");
 		}
+
+		//On affiche le formulaire d'édition
+		return $this->render('', ['question' => $question]);
 	}
 
 	/**

@@ -19,9 +19,10 @@
 			<legend>Liste des questions</legend>
 			<p><a href="{{ path('admin_ajout_question') }}">Ajouter une question</a></p>
 			{% if questions %}
+				<p>Nombre total de question(s) : {{ questions|length }}</p>
 				<ul>
 					{% for question in questions %}
-						<li>{{ question.libele }} <a href="{{ path('admin_question_delete', {"id": question.id}) }}">❌</a></li>
+						<li>{{ question.libele }} <a href="{{ path('admin_question_edit', {"slug": question.id}) }}">✏</a> <a href="{{ path('admin_question_delete', {"id": question.id}) }}">❌</a></li>
 					{% endfor %}
 				</ul>
 			{% else %}
