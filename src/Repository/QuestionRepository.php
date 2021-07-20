@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repository;
 
 use App\Entity\Question;
@@ -12,7 +13,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Question[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class QuestionRepository extends ServiceEntityRepository {
+
 	public function __construct(ManagerRegistry $registry) {
 		parent::__construct($registry, Question::class);
 	}
+
 }
