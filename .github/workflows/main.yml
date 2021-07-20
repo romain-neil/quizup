@@ -24,6 +24,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      
+      - name: Setup PHP with required extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          extensions: gd
+      
       - uses: php-actions/composer@v1
       
       # Cache vendor dir
@@ -37,12 +44,6 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-            
-      - name: Setup PHP with required extensions
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.4
-          extensions: gd
       
       #Run composer
       - name: Install dependencies
