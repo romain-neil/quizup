@@ -12,7 +12,6 @@ if(typeof Element.prototype.clearChildren === 'undefined') {
 
 function loadClass() {
 	let epleID = document.getElementById("eple").value
-	let d;
 
 	fetch(`${api_base}/class?lyc=${epleID}`)
 		.then(data => data.json())
