@@ -103,7 +103,7 @@ class ApiController extends AbstractController {
 			$tabClasses['message'] = "There is no class for the selected input";
 		}
 
-		return $this->json([$tabClasses]);
+		return $this->json($tabClasses);
 	}
 
 	/**

@@ -16,10 +16,7 @@ function loadClass() {
 
 	fetch(`${api_base}/class?lyc=${epleID}`)
 		.then(data => data.json())
-		.then(res => {
-			d = res[0]
-		})
-		.finally(() => {
+		.then((d) => {
 			let select = document.getElementById('class_list');
 			select.clearChildren()
 
