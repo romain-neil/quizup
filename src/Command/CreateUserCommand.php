@@ -36,7 +36,7 @@ class CreateUserCommand extends Command {
 			return Command::FAILURE;
 		}
 
-		$output->writeln("<info>Utilisateur créer avec succès</info>");
+		$output->writeln("<info>Utilisateur crée avec succès</info>");
 
 		return Command::SUCCESS;
 	}
