@@ -57,7 +57,12 @@ class AdminController extends AbstractController {
 
 				if($file) {
 					$fileName = $fileUploader->upload($file);
-					$question->setImage($fileName);
+
+					if($fileName != null) {
+						$question->setImage($fileName);
+					} else {
+						$this->addFlash('error', 'Une erreur est survenue lors de l\'import de l\'image');
+					}
 				}
 			}
 
@@ -86,10 +91,12 @@ class AdminController extends AbstractController {
 		$question = $manager->getRepository(Question::class)->findOneBy(["id" => $slug]);
 
 		if($question == null) {
+			$this->addFlash('warning', "La question n'existe pas");
 			return $this->redirectToRoute('admin_index');
 		}
 
 		$form = $this->createForm(QuestionType::class, $question);
+		$answers = $question->getAnswers()->getValues();
 
 		if($form->isSubmitted() && $form->isValid()) {
 			//On sauvegarde avec les nouveaux paramètres

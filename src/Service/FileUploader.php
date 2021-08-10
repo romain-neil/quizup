@@ -1,6 +1,7 @@
 <?php
 namespace App\Service;
 
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -14,10 +15,16 @@ class FileUploader {
 		$this->slugger = $slugger;
 	}
 
-	public function upload(UploadedFile $file): string {
-		$fileName = 'question-' . uniqid() . '.jpg';
+	public function upload(UploadedFile $file): ?string {
+		$originalFileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+		$safeFileName = $this->slugger->slug($originalFileName);
+		$fileName = $safeFileName . '-' . uniqid() . '.jpg';
 
-		$file->move($this->targetDirectory, $fileName);
+		try {
+			$file->move($this->targetDirectory, $fileName);
+		} catch(FileException $e) {
+			return null;
+		}
 
 		return $fileName;
 	}
