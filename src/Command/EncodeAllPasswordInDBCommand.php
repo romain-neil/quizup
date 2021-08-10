@@ -13,13 +13,11 @@ class EncodeAllPasswordInDBCommand extends Command {
 
 	protected static $defaultName = 'app:encode-all-pass';
 
-	private UserService $service;
 
 	private UserPasswordEncoderInterface $encoder;
 	private EntityManagerInterface $manager;
 
-	public function __construct(UserService $service, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager, string $name = null) {
-		$this->service = $service;
+	public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager, string $name = null) {
 		$this->encoder = $encoder;
 		$this->manager = $manager;
 
@@ -31,7 +29,7 @@ class EncodeAllPasswordInDBCommand extends Command {
 			->setDescription('Encode tout les mdp de la base de donnée');
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		/** @var User[] $users */
 		$users = $this->manager->getRepository(User::class)->findAll();
 
