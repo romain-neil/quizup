@@ -122,13 +122,4 @@ class ApiController extends AbstractController {
 		return $this->json($answers);
 	}
 
-	/**
-	 * @Route("/dump_form")
-	 * @param Request $request
-	 * @return Response
-	 */
-	public function show_req_params(Request $request): Response {
-		return $this->render("debug.html.twig", ["file" => $request->request]);
-	}
-
 }
