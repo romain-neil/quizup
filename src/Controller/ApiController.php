@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\Answer;
 use App\Entity\Classe;
 use App\Entity\Lycee;
 use App\Entity\Participation;
@@ -104,6 +105,21 @@ class ApiController extends AbstractController {
 		}
 
 		return $this->json($tabClasses);
+	}
+
+	/**
+	 * @Route("/answers", name="get_answers_list")
+	 * @param \Symfony\Component\HttpFoundation\Request $request
+	 * @param \Doctrine\ORM\EntityManagerInterface $manager
+	 * @return \Symfony\Component\HttpFoundation\JsonResponse
+	 */
+	public function getAnswersList(Request $request, EntityManagerInterface $manager): JsonResponse {
+		$questionId = $request->query->get('id');
+
+		/** @var Answer[] $answers */
+		$answers = $manager->getRepository(Answer::class)->findBy(["id" => $questionId]);
+
+		return $this->json($answers);
 	}
 
 	/**
