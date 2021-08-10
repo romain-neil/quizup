@@ -8,7 +8,6 @@ class FileUploader {
 
 	private string $targetDirectory;
 	private SluggerInterface $slugger;
-	private string $error;
 
 	public function __construct(string $targetDirectory, SluggerInterface $slugger) {
 		$this->targetDirectory = $targetDirectory;
@@ -21,13 +20,6 @@ class FileUploader {
 		$file->move($this->targetDirectory, $fileName);
 
 		return $fileName;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getError(): string {
-		return $this->error;
 	}
 
 	public function getTargetDirectory(): string {
