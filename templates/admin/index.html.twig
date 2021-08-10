@@ -3,31 +3,46 @@
 {% block title %}Accueil{% endblock %}
 
 {% block stylesheets %}
-<style>
-	li>a {
-		text-decoration: none;
-	}
-</style>
+	<style>
+		li>a {
+			text-decoration: none;
+		}
+	</style>
+	<link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 {% endblock %}
 
 {% block body %}
-	<div class="container">
-		<h2>Interface d'administration</h2>
-		<p><a href="{{ path('app_logout') }}">Se déconnecter</a> <a href="{{ path('repondre') }}">Participer au quiz</a> <a href="{{ path('admin_show_high_scores') }}">Liste des meilleurs scores</a></p>
-		<p><a href="{{ path('admin_reporting') }}">Reporting</a></p>
-		<fieldset>
-			<legend>Liste des questions</legend>
+	<div class="main">
+		<div>
+			<h2>Interface d'administration</h2>
+			<div>
+				<p><a href="{{ path('app_logout') }}">Se déconnecter</a> <a href="{{ path('repondre') }}">Participer au quiz</a></p>
+				<p><a href="{{ path('admin_show_high_scores') }}">Liste des meilleurs scores</a> <a href="{{ path('admin_reporting') }}">Reporting</a></p>
+			</div>
+			<h2>Liste des questions</h2>
+
 			<p><a href="{{ path('admin_ajout_question') }}">Ajouter une question</a></p>
 			{% if questions %}
 				<p>Nombre total de question(s) : {{ questions|length }}</p>
-				<ul>
-					{% for question in questions %}
-						<li>{{ question.libele }} <a href="{{ path('admin_question_edit', {"slug": question.id}) }}">✏</a> <a href="{{ path('admin_question_delete', {"id": question.id}) }}">❌</a></li>
-					{% endfor %}
-				</ul>
+				<table>
+					<thead>
+						<tr>
+							<th scope="col">Question</th>
+							<th scope="col">Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for question in questions %}
+							<tr>
+								<td>{{ question.libele }}</td>
+								<td><a href="{{ path('admin_question_edit', {"slug": question.id}) }}">✏</a> <a href="{{ path('admin_question_delete', {"id": question.id}) }}">❌</a></td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
 			{% else %}
 				<p>Aucune question</p>
 			{% endif %}
-		</fieldset>
+		</div>
 	</div>
 {% endblock %}
