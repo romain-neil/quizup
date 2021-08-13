@@ -54,15 +54,15 @@ class HomeController extends AbstractController {
 		/** @var Question[] $allQuestions */
 		$allQuestions = (array) $em->getRepository(Question::class)->findAll();  //Liste de toutes les questions
 
-		/** @var Choice[] $userChoices */
-		$userChoices = $participation->getChoices(); //Récupération de toute les questions répondues
-
 		/** @var Question $questionToShow */
 		$questionToShow = null;
 
 		if($participation != null) { //Si l'utilisateur a déja une participation enregistrée
 			/** @var Question[] $questionsRepondues */
 			$questionsRepondues = [];
+
+			/** @var Choice[] $userChoices */
+			$userChoices = $participation->getChoices(); //Récupération de toute les questions répondues
 
 			//Si on a répondu à autant de questions qu'il y en a
 			if(count($userChoices) == count($allQuestions)) {
